@@ -23,9 +23,6 @@ export default function Portfolio() {
           <h1 className="text-4xl sm:text-5xl font-extrabold text-blue-600 mt-2">
             พอร์ตพี่มีให้ดู
           </h1>
-          <p className="mt-3 text-lg text-gray-500 max-w-2xl mx-auto">
-            รวมพอร์ตฟอลิโอของรุ่นพี่ ให้สำหรับน้องๆ ที่กำลังเตรียมตัวเข้ามหาวิทยาลัย
-          </p>
         </div>
 
         <div className="container mx-auto p-4 lg:p-8">

@@ -45,14 +45,14 @@ export default function StudentServicesDashboard() {
       hover: "group-hover:from-emerald-600 group-hover:to-teal-700",
       shadow: "shadow-emerald-500/20 hover:shadow-emerald-500/40",
     },
-    {
-      primary: "from-purple-500 to-purple-600",
-      secondary: "bg-purple-500",
-      light: "bg-purple-100",
-      text: "text-purple-600",
-      hover: "group-hover:from-purple-600 group-hover:to-purple-700",
-      shadow: "shadow-purple-500/20 hover:shadow-purple-500/40",
-    },
+    // {
+    //   primary: "from-purple-500 to-purple-600",
+    //   secondary: "bg-purple-500",
+    //   light: "bg-purple-100",
+    //   text: "text-purple-600",
+    //   hover: "group-hover:from-purple-600 group-hover:to-purple-700",
+    //   shadow: "shadow-purple-500/20 hover:shadow-purple-500/40",
+    // },
   ];
 
   // Service cards data
@@ -89,14 +89,14 @@ export default function StudentServicesDashboard() {
       ctaText: "ดู",
       isOpen: true,
     },
-    {
-      title: "พอร์ตพี่มีให้ดู",
-      description: "",
-      icon: <IoIosPeople className="text-xl sm:text-2xl md:text-3xl" />,
-      link: "",
-      ctaText: "ยังไม่เปิดให้ใข้งาน",
-      isOpen: false,
-    },
+    // {
+    //   title: "พอร์ตพี่มีให้ดู",
+    //   description: "",
+    //   icon: <IoIosPeople className="text-xl sm:text-2xl md:text-3xl" />,
+    //   link: "",
+    //   ctaText: "ยังไม่เปิดให้ใข้งาน",
+    //   isOpen: false,
+    // },
   ];
 
   // Animation variants

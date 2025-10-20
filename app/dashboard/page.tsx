@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import React, { useState } from "react";
+import { BiSolidFileFind } from "react-icons/bi";
 // import Navbar from '../components/NavBar';
 import { FaMusic } from "react-icons/fa6";
 import { MdSportsBasketball, MdMeetingRoom } from "react-icons/md";
@@ -44,6 +45,14 @@ export default function StudentServicesDashboard() {
       hover: "group-hover:from-emerald-600 group-hover:to-teal-700",
       shadow: "shadow-emerald-500/20 hover:shadow-emerald-500/40",
     },
+    {
+      primary: "from-purple-500 to-purple-600",
+      secondary: "bg-purple-500",
+      light: "bg-purple-100",
+      text: "text-purple-600",
+      hover: "group-hover:from-purple-600 group-hover:to-purple-700",
+      shadow: "shadow-purple-500/20 hover:shadow-purple-500/40",
+    },
   ];
 
   // Service cards data
@@ -51,7 +60,7 @@ export default function StudentServicesDashboard() {
     {
       title: "จองห้องประชุม",
       description: "",
-      icon: <MdMeetingRoom className="text-xl sm:text-2xl md:text-3xl" />,
+      icon: <MdMeetingRoom className="text-xl sm:text-3xl md:text-3xl" />,
       link: "https://calendar.app.google/WHXDg1d1RgnVoZcB6",
       ctaText: "จอง",
       isOpen: true,
@@ -67,8 +76,16 @@ export default function StudentServicesDashboard() {
     {
       title: "CD Sports",
       description: "",
-      icon: <MdSportsBasketball className="text-xl sm:text-2xl md:text-3xl" />,
+      icon: <MdSportsBasketball className="text-xl sm:text-3xl md:text-3xl" />,
       link: "https://liff.line.me/2006915917-M3RoQ7Ve",
+      ctaText: "ดู",
+      isOpen: true,
+    },
+    {
+      title: "Lost and Found",
+      description: "",
+      icon: <BiSolidFileFind className="text-xl sm:text-3xl md:text-3xl" />,
+      link: "",
       ctaText: "ดู",
       isOpen: true,
     },

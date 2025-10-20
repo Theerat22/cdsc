@@ -1,4 +1,3 @@
-// app/api/sports/route.ts
 import { NextResponse } from "next/server";
 import { mysqlPool } from "@/utils/db";
 
@@ -48,7 +47,7 @@ export async function GET() {
           (SUM(CASE WHEN orange = 1 THEN 1 ELSE 0 END) + SUM(CASE WHEN orange = 2 THEN 1 ELSE 0 END) + SUM(CASE WHEN orange = 3 THEN 1 ELSE 0 END)) AS total_medals
       FROM sportsday
       WHERE orange IS NOT NULL
-      ORDER BY gold_medals DESC, total_medals DESC
+      ORDER BY gold_medals DESC, silver_medals DESC, bronze_medals DESC
     `;
 
     const [rows] = await mysqlPool.query(sql);

@@ -19,6 +19,15 @@ const getColorClasses = (color: string) => {
   return colorMap[color as keyof typeof colorMap] || 'from-gray-500 to-gray-300';
 };
 
+const getColor = (color: string) => {
+  const colorMap = {
+    green: 'text-emerald-500',
+    pink: 'text-pink-500',
+    purple: 'text-purple-500',
+    orange: 'text-amber-500'
+  };
+  return colorMap[color as keyof typeof colorMap] || 'from-gray-500 to-gray-300';
+};
 const getColorName = (color: string) => {
   const nameMap = {
     green: 'สีเขียว',
@@ -92,7 +101,7 @@ export default function SportsDashboard() {
 
         {/* Main Card */}
         <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl overflow-hidden mx-2 sm:mx-0">
-          <div className="bg-amber-400 px-4 sm:px-8 py-4 sm:py-6">
+          <div className="bg-amber-500 px-4 sm:px-8 py-4 sm:py-6">
             <h2 className="text-xl sm:text-2xl font-semibold text-white text-center">ตารางคะแนนรวม</h2>
           </div>
 
@@ -188,10 +197,10 @@ export default function SportsDashboard() {
                     <div className="flex items-center gap-3">
                       {getRankIcon(index + 1)}
                       <span className="text-lg sm:text-xl font-bold text-gray-700">#{index + 1}</span>
-                      <div 
+                      {/* <div 
                         className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r ${getColorClasses(team.color)} shadow-lg`}
-                      ></div>
-                      <span className="font-semibold text-gray-800 text-lg sm:text-xl">
+                      ></div> */}
+                      <span className={`font-semibold ${getColorClasses(team.color)} text-lg sm:text-xl`}>
                         {getColorName(team.color)}
                       </span>
                     </div>

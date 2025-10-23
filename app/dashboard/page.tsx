@@ -85,7 +85,7 @@ export default function StudentServicesDashboard() {
       title: "Lost and Found",
       description: "",
       icon: <BiSolidFileFind className="text-xl sm:text-3xl md:text-3xl" />,
-      link: "",
+      link: "https://liff.line.me/2006915917-4XDJLNpr",
       ctaText: "ดู",
       isOpen: true,
     },

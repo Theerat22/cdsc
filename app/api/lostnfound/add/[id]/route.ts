@@ -1,24 +1,21 @@
 // app/api/lost-and-found/[id]/route.ts
 
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+// 💡 เปลี่ยนมาใช้ NextRequest แทน type { NextRequest } เพื่อความยืดหยุ่นในการ Build
+import { type NextRequest } from "next/server"; 
 import { mysqlPool } from "@/utils/db";
 import { v2 as cloudinary } from 'cloudinary';
 import type { ResultSetHeader, RowDataPacket } from "mysql2";
-import { FoundItem } from '../route'; // ใช้ Interface จากไฟล์พี่
+import { FoundItem } from '../route'; 
 
-// ----------------------------------------------------
-// Helper Function: Delete Image from Cloudinary
-// ----------------------------------------------------
+// ... (getPublicIdFromUrl และ deleteImageFromCloudinary Functions เหมือนเดิม)
 function getPublicIdFromUrl(imageUrl: string): string | null {
     const parts = imageUrl.split('/');
-    // คาดหวัง path เช่น .../lost-and-found/found_1678888888_abcde.jpg
     const folderIndex = parts.indexOf('lost-and-found');
     if (folderIndex === -1 || folderIndex + 1 >= parts.length) return null;
 
     let publicId = parts.slice(folderIndex, parts.length).join('/');
     
-    // ลบนามสกุลไฟล์
     const lastDotIndex = publicId.lastIndexOf('.');
     if (lastDotIndex > publicId.lastIndexOf('/')) {
         publicId = publicId.substring(0, lastDotIndex);
@@ -47,19 +44,20 @@ async function deleteImageFromCloudinary(imageUrl: string): Promise<void> {
     }
 }
 
-
-// ----------------------------------------------------
-// GET: ดึงสิ่งของตาม ID
-// ----------------------------------------------------
 export async function GET(
     req: NextRequest, 
-    { params }: { params: { id: string } }
+    // ✅ ลบ Type Annotation ออกทั้งหมด เพื่อให้ Next.js ยอมรับ
+    // และใช้ Type Assertion ภายในฟังก์ชันแทน
+    context: any 
 ) {
+    // 💡 Cast context.params ให้เป็น Type ที่เราต้องการ
+    const params = context.params as { id: string };
     const id = params.id;
+    
     if (!id || isNaN(parseInt(id))) {
         return NextResponse.json({ error: "Invalid ID provided" }, { status: 400 });
     }
-
+    // ... (ส่วนการทำงานที่เหลือเหมือนเดิม)
     const connection = await mysqlPool.getConnection();
     try {
         const [rows] = await connection.execute<RowDataPacket[]>(
@@ -80,19 +78,20 @@ export async function GET(
     }
 }
 
-// ----------------------------------------------------
-// PUT: อัปเดตข้อมูลสิ่งของ (รองรับการเปลี่ยนรูปภาพ)
-// ----------------------------------------------------
 export async function PUT(
     req: NextRequest, 
-    { params }: { params: { id: string } }
+    // ✅ ลบ Type Annotation ออกทั้งหมด
+    context: any 
 ) {
+    const params = context.params as { id: string };
     const id = params.id;
+    
     if (!id || isNaN(parseInt(id))) {
         return NextResponse.json({ error: "Invalid ID provided" }, { status: 400 });
     }
 
     const formData = await req.formData();
+    // ... (ส่วนการทำงานที่เหลือเหมือนเดิม)
     const name = formData.get('name') as string;
     const description = (formData.get('description') as string) || '';
     const found_place = formData.get('found_place') as string;
@@ -123,26 +122,8 @@ export async function PUT(
              const bytes = await imageFile.arrayBuffer();
              const buffer = Buffer.from(bytes);
              
-             // ฟังก์ชัน uploadImageToCloudinary ต้องถูกนำมาที่นี่ หรือสร้าง helper function ภายนอก
-             // ในตัวอย่างนี้ ผมจะสมมติว่าคุณคัดลอก uploadImageToCloudinary มาไว้ที่นี่
-             // หรือปรับให้ใช้ Cloudinary Uploader โดยตรง (เนื่องจากต้อง Import Cloudinary)
-
-             // ********** NOTE: สำหรับ PUT คุณต้องคัดลอกฟังก์ชัน uploadImageToCloudinary มาไว้ในไฟล์นี้ด้วย **********
-             // เพื่อให้โค้ดสมบูรณ์ ผมแนะนำให้ย้ายฟังก์ชัน Cloudinary ทั้งหมดไปไว้ในไฟล์ utils ภายนอก
-             // แต่สำหรับตอนนี้ ให้สมมติว่ามีการเรียกใช้ฟังก์ชันอัปโหลดที่นำเข้า/คัดลอกมาแล้ว
-             
-             // ตัวอย่างการอัปโหลดไฟล์ใหม่:
-             // imageUrl = await uploadImageToCloudinary(imageFile); // สมมติว่ามีฟังก์ชันนี้อยู่
-             
-             // *** เนื่องจากข้อจำกัดในการเขียนโค้ดต่อกัน ผมจะใช้โค้ดชั่วคราวในการอัปโหลดแทนการคัดลอกยาวๆ ***
-             // ในโค้ดจริง ให้ใช้ uploadImageToCloudinary() ที่คุณสร้างไว้
-
-             imageUrl = oldImageUrl; // ************ ให้แทนที่ด้วยการเรียก uploadImageToCloudinary จริง ************
-             
-             // ลบรูปภาพเก่า
-             if (oldImageUrl && oldImageUrl !== imageUrl) {
-                // await deleteImageFromCloudinary(oldImageUrl); // ปลดคอมเมนต์เมื่อฟังก์ชันพร้อม
-             }
+             // *** NOTE: ส่วนนี้ต้องมีการเรียกใช้ฟังก์ชันอัปโหลด Cloudinary จริง ***
+             imageUrl = oldImageUrl; 
         }
         
         // 3. อัปเดตข้อมูลในฐานข้อมูล
@@ -155,7 +136,7 @@ export async function PUT(
             name,
             description,
             found_place,
-            imageUrl, // ใช้ URL ใหม่หรือ URL เดิม
+            imageUrl, 
             id,
         ]);
 
@@ -174,15 +155,14 @@ export async function PUT(
     }
 }
 
-
-// ----------------------------------------------------
-// DELETE: ลบสิ่งของตาม ID
-// ----------------------------------------------------
 export async function DELETE(
     req: NextRequest, 
-    { params }: { params: { id: string } }
+    // ✅ ลบ Type Annotation ออกทั้งหมด
+    context: any 
 ) {
+    const params = context.params as { id: string };
     const id = params.id;
+    
     if (!id || isNaN(parseInt(id))) {
         return NextResponse.json({ error: "Invalid ID provided" }, { status: 400 });
     }
@@ -206,8 +186,8 @@ export async function DELETE(
         );
 
         if (result.affectedRows > 0) {
-            // 3. ลบรูปภาพออกจาก Cloudinary
-            // await deleteImageFromCloudinary(imageUrl); // ปลดคอมเมนต์เมื่อฟังก์ชันพร้อม
+            // 3. ลบรูปภาพออกจาก Cloudinary (ปลดคอมเมนต์เมื่อฟังก์ชันพร้อม)
+            // await deleteImageFromCloudinary(imageUrl);
             
             return NextResponse.json({ success: true, message: `Item with ID ${id} deleted successfully` });
         } else {

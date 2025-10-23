@@ -1,24 +1,21 @@
 import { NextResponse } from "next/server";
 import { mysqlPool } from "@/utils/db";
 
-export interface PortfolioData {
+export interface Thing {
   name: string;
-  program: string;
-  cd: number;
-  faculty: string;
-  university: string;
-  link: string;
-  image: string;
+  description: string;
+  found_place: string;
+  image_url: string;
 }
 
 export async function GET() {
   try {
     const sql = `
-      SELECT * FROM portfolio
+      SELECT * FROM lost_and_found
     `;
 
     const [rows] = await mysqlPool.query(sql);
-    return NextResponse.json(rows as PortfolioData[]);
+    return NextResponse.json(rows as Thing[]);
   } catch (error) {
     console.error("Database error:", error);
     return NextResponse.json(

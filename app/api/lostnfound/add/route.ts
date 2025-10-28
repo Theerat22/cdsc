@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. ตรวจสอบประเภทไฟล์
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/HEIC'];
     if (!allowedTypes.includes(imageFile.type)) {
       return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
     }

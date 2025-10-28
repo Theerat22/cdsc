@@ -71,7 +71,7 @@ if (loading) {
                 key={index}
                 className="bg-white rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 transform hover:-translate-y-1"
               >
-                <div className="relative w-full h-48 sm:h-56 lg:h-64">
+                <div className="relative w-full h-48 sm:h-48 lg:h-48">
                   <Image
                     src={thing.image_url}
                     alt={thing.name}

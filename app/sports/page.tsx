@@ -29,7 +29,7 @@ export default function SportsEventNav() {
       title: "สกอร์การแข่งขันล่าสุด",
       description: "ดูผลคะแนนการแข่งขันล่าสุด",
       icon: (<MdOutlineScoreboard className='text-2xl' />),
-      link: "/sports/scores",
+      link: "/sports/score",
       ctaText: "ดูสกอร์ล่าสุด"
     },
     {

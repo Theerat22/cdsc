@@ -3,7 +3,7 @@ import { mysqlPool } from "@/utils/db";
 
 export interface PortfolioData {
   name: string;
-  program: string;
+  nickname: string;
   cd: number;
   faculty: string;
   university: string;

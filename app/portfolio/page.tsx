@@ -5,7 +5,7 @@ import Link from "next/link";
 
 interface PortfolioData {
   name: string;
-  program: string;
+  nickname: string;
   cd: number;
   faculty: string;
   university: string;
@@ -17,7 +17,7 @@ export default function Portfolio() {
     {
       name: "ธีรัตม์ดลฉัตร ฉัตรชัย",
       program: "ศิิลป์-ภาษาจีน",
-      cd: 56,
+      nickname: 56,
       faculty: "คณะเทคโนโลยีสารสนเทศและการสื่อสาร",
       university: "มหาวิทยาลัยมหิดล",
       link: "https://drive.google.com/file/d/16ROFCwPdUFEPGqIaXTM0--fv2AWrKbrL/view?usp=sharing",
@@ -74,7 +74,7 @@ export default function Portfolio() {
     <div className="min-h-screen bg-gray-50 pt-12 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="mb-12 border-b border-gray-200 pb-4">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-blue-600 mt-2">
+          <h1 className="text-3xl sm:text-1xl font-extrabold text-blue-600 mt-1">
             พอร์ตพี่มีให้ดู
           </h1>
         </div>
@@ -101,15 +101,15 @@ export default function Portfolio() {
                 <div className="flex flex-col p-4 flex-grow">
                   <h4 className="text-base sm:text-lg font-extrabold text-blue-700 mb-2 truncate">
                     {item.name}{" "}
-                    <span className="text-gray-500">(CD{item.cd})</span>
+                    <span className="text-gray-500">(พี่{item.nickname})</span>
                   </h4>
 
                   <div className="text-xs sm:text-sm text-gray-700 space-y-2">
                     <p className="border-l-4 border-yellow-500 pl-2">
-                      <span className="font-medium text-gray-900">
-                        สายการเรียน:
+                      <span className="font-xl text-gray-900">
+                        รุ่น:
                       </span>{" "}
-                      {item.program}
+                      {item.cd}
                     </p>
 
                     <p className="border-l-4 border-blue-400 pl-2">

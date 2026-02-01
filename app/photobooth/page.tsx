@@ -175,9 +175,9 @@ export default function PhotoboothPage() {
     <main className="min-h-screen bg-white text-black p-4 md:p-10 flex flex-col justify-center items-center">
       {isUploading && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex flex-col items-center justify-center text-white">
-          <div className="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <div className="w-12 h-12 border-4 border-blue-700 border-t-transparent rounded-full animate-spin mb-4"></div>
           <p className="text-xl font-bold">
-            กำลังประมวลผลและอัปโหลดไปยัง Cloudinary...
+            กำลังประมวลผล
           </p>
         </div>
       )}
@@ -200,7 +200,7 @@ export default function PhotoboothPage() {
       {!isCapturing && photos.length === 0 && (
         <button
           onClick={handleStart}
-          className="mt-10 px-12 py-3 text-white bg-blue-700 hover:bg-blue-700 rounded-2xl font-bold text-2xl shadow-lg transition-all active:scale-95"
+          className="mt-8 px-7 py-2 text-white bg-blue-700 hover:bg-blue-700 rounded-2xl font-bold text-lg shadow-lg transition-all active:scale-95"
         >
           เริ่มถ่ายรูป
         </button>

@@ -78,7 +78,7 @@ export default function CameraView({ isCapturing, onCapture, maxPhotos, currentC
 
       {isWaiting && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-blue-600/60 backdrop-blur-md z-30 animate-in fade-in">
-          <div className="bg-white text-pink-600 px-6 py-2 rounded-full font-bold text-xl mb-4 shadow-xl">
+          <div className="bg-white text-blue-600 px-6 py-2 rounded-full font-bold text-xl mb-4 shadow-xl">
             เตรียมตัว
           </div>
           <p className="text-white text-2xl font-black italic uppercase tracking-widest animate-pulse">

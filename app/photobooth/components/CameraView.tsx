@@ -15,6 +15,34 @@ export default function CameraView({ isCapturing, onCapture, maxPhotos, currentC
   const [isWaiting, setIsWaiting] = useState(false);
   const [showFlash, setShowFlash] = useState(false);
 
+  // --- ส่วนที่เพิ่ม: โหลดเสียงแยกตามหมายเลข ---
+  const audioNumbers = useRef<Record<number, HTMLAudioElement>>({});
+  const shutterSound = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // โหลดเสียง 1, 2, 3 เตรียมไว้
+    [1, 2, 3].forEach((num) => {
+      audioNumbers.current[num] = new Audio(`/sounds/${num}.mp3`);
+    });
+    shutterSound.current = new Audio("/sounds/shutter.mp3");
+  }, []);
+
+  const playNumberSound = (num: number) => {
+    const sound = audioNumbers.current[num];
+    if (sound) {
+      sound.currentTime = 0;
+      sound.play().catch((e) => console.log("Audio play blocked", e));
+    }
+  };
+
+  const playShutter = () => {
+    if (shutterSound.current) {
+      shutterSound.current.currentTime = 0;
+      shutterSound.current.play().catch((e) => console.log("Audio play blocked", e));
+    }
+  };
+  // ----------------------------------------
+
   useEffect(() => {
     if (isCapturing && currentCount < maxPhotos && !isWaiting && countdown === null) {
       runSequence();
@@ -24,12 +52,13 @@ export default function CameraView({ isCapturing, onCapture, maxPhotos, currentC
   const runSequence = async () => {
     if (currentCount > 0) {
       setIsWaiting(true);
-      await new Promise((resolve) => setTimeout(resolve, 2500)); 
+      await new Promise((resolve) => setTimeout(resolve, 2500));
       setIsWaiting(false);
     }
 
     let timer = 3;
     setCountdown(timer);
+    playNumberSound(timer); // เล่นเสียงเลข 3 ทันทีที่เริ่ม
 
     const interval = setInterval(() => {
       timer--;
@@ -39,12 +68,14 @@ export default function CameraView({ isCapturing, onCapture, maxPhotos, currentC
         executeCapture();
       } else {
         setCountdown(timer);
+        playNumberSound(timer); // เล่นเสียงตามเลขที่เปลี่ยนไป (2 และ 1)
       }
     }, 1000);
   };
 
   const executeCapture = () => {
     setShowFlash(true);
+    playShutter(); // เสียงแชะ!
     
     const imageSrc = webcamRef.current?.getScreenshot();
     if (imageSrc) {
@@ -64,6 +95,7 @@ export default function CameraView({ isCapturing, onCapture, maxPhotos, currentC
         className="w-full h-full object-cover scale-x-[-1]"
       />
 
+      {/* UI ส่วนแสดงผลเหมือนเดิม */}
       {showFlash && (
         <div className="absolute inset-0 bg-white animate-out fade-out duration-300 z-50" />
       )}

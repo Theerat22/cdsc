@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface ResultModalProps {
   qrCodeUrl: string;
@@ -15,13 +15,29 @@ export default function ResultModal({
   vdoQRUrl,
   onClose,
 }: ResultModalProps) {
+
+    
   // ป้องกันการ Scroll หน้าจอหลักเมื่อเปิด Modal
+  const thankyousound = useRef<HTMLAudioElement | null>(null);
+
+
+  const playShutter = () => {
+    if (thankyousound.current) {
+      thankyousound.current.currentTime = 0;
+      thankyousound.current.play().catch((e) => console.log("Audio play blocked", e));
+    }
+  };
+
   useEffect(() => {
+    thankyousound.current = new Audio("/sounds/thankyou.mp3");
+    playShutter()
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "auto";
     };
+    
   }, []);
+
 
   return (
     <div
@@ -32,7 +48,12 @@ export default function ResultModal({
         className="bg-white p-8 rounded-[2.5rem] max-w-lg max-h-lg text-center flex flex-col items-center shadow-2xl animate-in zoom-in duration-300"
         onClick={(e) => e.stopPropagation()} // ป้องกันการปิดเมื่อคลิกตัว Modal เอง
       >
-
+        <button
+            onClick={onClose}
+            className="absolute top-5 right-6 text-zinc-400 hover:text-zinc-600 transition-colors text-2xl font-light"
+          >
+            x
+          </button>
 
         <h2 className="text-2xl font-black text-zinc-900 mb-1">
           ถ่ายรูปสำเร็จ
@@ -71,12 +92,7 @@ export default function ResultModal({
             ถ่ายใหม่
           </button>
 
-          <button
-            onClick={onClose}
-            className="w-full py-2 text-zinc-400 font-medium text-sm hover:text-zinc-600 transition-colors"
-          >
-            ปิดหน้าต่างนี้
-          </button>
+          
         </div>
       </div>
     </div>

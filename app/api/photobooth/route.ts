@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
     const directImageUrl = `https://res.cloudinary.com/${cloudName}/image/upload/f_jpg,q_100/photobooth-strips/${imagePublicId}.jpg`;
     const finalVideoUrl = video 
-      ? `https://res.cloudinary.com/${cloudName}/video/upload/e_accelerate:70,w_1280,c_scale,q_100/photobooth-videos/${videoPublicId}.mp4`
+      ? `https://res.cloudinary.com/${cloudName}/video/upload/fl_attachment/e_accelerate:70,w_1280,c_scale,q_100/photobooth-videos/${videoPublicId}.mp4`
       : "";
 
     const imageUploadPromise = cloudinary.uploader.upload(image, {

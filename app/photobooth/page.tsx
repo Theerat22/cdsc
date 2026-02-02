@@ -181,7 +181,7 @@ export default function PhotoboothPage() {
         </div>
       )}
 
-      <img src={"/logo.jpg"} alt="Logo" width={500} height={600} className="z-[100]"/>
+      <img src={"/logo.jpg"} alt="Logo" width={500} height={600} className="z-[70]"/>
       <div className="grid lg:grid-cols-12 gap-5 w-full max-w-[1500px] items-center justify-center">
         <div className="lg:col-span-8 w-full ">
           <CameraView

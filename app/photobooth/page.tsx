@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from "react";
 import CameraView from "../photobooth/components/CameraView";
 import PhotoStrip from "../photobooth/components/PhotoSript";
 import ResultModal from "../photobooth/components/ResultModal";
-import { set } from "date-fns";
 
 export default function PhotoboothPage() {
   const [photos, setPhotos] = useState<string[]>([]);
@@ -182,6 +181,7 @@ export default function PhotoboothPage() {
         </div>
       )}
 
+      <img src={"/logo.jpg"} alt="Logo" width={500} height={600} className="z-[100]"/>
       <div className="grid lg:grid-cols-12 gap-5 w-full max-w-[1500px] items-center justify-center">
         <div className="lg:col-span-8 w-full ">
           <CameraView
@@ -200,7 +200,7 @@ export default function PhotoboothPage() {
       {!isCapturing && photos.length === 0 && (
         <button
           onClick={handleStart}
-          className="mt-8 px-7 py-2 text-white bg-blue-700 hover:bg-blue-700 rounded-2xl font-bold text-lg shadow-lg transition-all active:scale-95"
+          className="mt-8 px-7 py-2 text-white bg-blue-900 hover:bg-blue-950 rounded-2xl font-bold text-lg shadow-lg transition-all active:scale-95"
         >
           เริ่มถ่ายรูป
         </button>

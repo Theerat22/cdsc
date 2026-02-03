@@ -8,12 +8,17 @@ export default function PhotoboothPage() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [isCapturing, setIsCapturing] = useState(false);
   const [qrCode, setQrCode] = useState<string | null>(null);
-// const qrCode = "dff";
   const [vdoQR, setVdoQR] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const videoChunksRef = useRef<Blob[]>([]);
+  const [template, setTemplate] = useState<string>("");
+
+  const templates = [
+    { name: "/photobooth/cd-white.jpg" },
+    { name: "/photobooth/cd-black.jpg" },
+    { name: "/photobooth/sing.jpg" },
+  ];
 
   useEffect(() => {
     if (photos.length === 3) {
@@ -21,70 +26,91 @@ export default function PhotoboothPage() {
     }
   }, [photos]);
 
-  // ฟังก์ชันสร้าง Photo Strip (High Res)
-  const createCombinedImage = async (images: string[]): Promise<string> => {
+  const createCombinedImage = async (
+    images: string[],
+    bgSrc: string,
+  ): Promise<string> => {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     if (!ctx) return "";
 
-    const imgObjects = await Promise.all(
-      images.map((src) => {
-        return new Promise<HTMLImageElement>((resolve) => {
-          const img = new Image();
-          img.crossOrigin = "anonymous"; // ป้องกันปัญหาเรื่อง CORS
-          img.onload = () => resolve(img);
-          img.src = src;
-        });
-      }),
-    );
-
-    const padding = 50;
-    const targetW = 1200;
-    const targetH = 800;
-
     canvas.width = 1300;
-    canvas.height = targetH * 3 + padding * 4 + 150;
+    canvas.height = 2750;
 
-    // พื้นหลังขาวสะอาด
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const loadImage = (src: string): Promise<HTMLImageElement> => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    };
 
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
+    try {
+      const [bgImg, ...imgObjects] = await Promise.all([
+        loadImage(bgSrc),
+        ...images.map(loadImage),
+      ]);
 
-    imgObjects.forEach((img, i) => {
-      const x = (canvas.width - targetW) / 2;
-      const y = padding + i * (targetH + padding);
+      ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
 
-      // --- Logic: Center Crop (ป้องกันภาพยืด) ---
-      const imgRatio = img.width / img.height;
-      const targetRatio = targetW / targetH;
+      const targetW = 1195;
+      const targetH = 690;
+      const marginTop = 280;
+      const spacing = 60;
+      const borderSize = 0;
 
-      let sx, sy, sWidth, sHeight;
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
 
-      if (imgRatio > targetRatio) {
-        sHeight = img.height;
-        sWidth = img.height * targetRatio;
-        sx = (img.width - sWidth) / 2;
-        sy = 0;
-      } else {
-        // ภาพต้นฉบับแคบกว่า (เช่น 4:3) -> ตัดบนล่างออก
-        sWidth = img.width;
-        sHeight = img.width / targetRatio;
-        sx = 0;
-        sy = (img.height - sHeight) / 2;
-      }
+      imgObjects.forEach((img, i) => {
+        const x = (canvas.width - targetW) / 2;
+        const y = marginTop + i * (targetH + spacing);
 
-      ctx.drawImage(img, sx, sy, sWidth, sHeight, x, y, targetW, targetH);
-    });
+        ctx.save();
 
-    ctx.fillStyle = "#18181b";
-    ctx.font = "italic bold 52px Arial";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("งานชุมนุม 2569", canvas.width / 2, canvas.height - 75);
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(x, y, targetW, targetH);
+        ctx.restore();
 
-    return canvas.toDataURL("image/jpeg", 1.0);
+        const drawW = targetW - borderSize * 2;
+        const drawH = targetH - borderSize * 2;
+
+        const imgRatio = img.width / img.height;
+        const targetRatio = drawW / drawH;
+        let sx, sy, sWidth, sHeight;
+
+        if (imgRatio > targetRatio) {
+          sHeight = img.height;
+          sWidth = img.height * targetRatio;
+          sx = (img.width - sWidth) / 2;
+          sy = 0;
+        } else {
+          sWidth = img.width;
+          sHeight = img.width / targetRatio;
+          sx = 0;
+          sy = (img.height - sHeight) / 2;
+        }
+
+        ctx.drawImage(
+          img,
+          sx,
+          sy,
+          sWidth,
+          sHeight,
+          x + borderSize,
+          y + borderSize,
+          drawW,
+          drawH,
+        );
+      });
+
+      return canvas.toDataURL("image/jpeg", 0.95);
+    } catch (error) {
+      console.error("Error loading images:", error);
+      return "";
+    }
   };
 
   const cameraStreamRef = useRef<MediaStream | null>(null);
@@ -144,7 +170,10 @@ export default function PhotoboothPage() {
     const videoBase64 = await stopRecordingAndGetBlob();
 
     try {
-      const combinedImage = await createCombinedImage(photos);
+      const combinedImage = await createCombinedImage(
+        photos,
+        template,
+      );
 
       const response = await fetch("/api/photobooth", {
         method: "POST",
@@ -175,13 +204,52 @@ export default function PhotoboothPage() {
       {isUploading && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex flex-col items-center justify-center text-white">
           <div className="w-12 h-12 border-4 border-blue-700 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-xl font-bold">
-            กำลังประมวลผล
-          </p>
+          <p className="text-xl font-bold">กำลังประมวลผล</p>
         </div>
       )}
 
-      <img src={"/logo.jpg"} alt="Logo" width={500} height={600} className="z-[70]"/>
+      {!template && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 sm:p-6">
+          <div
+            className="bg-white rounded-3xl max-w-3xl w-full p-6 shadow-2xl max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center mb-8">
+              <h1 className="text-2xl font-bold text-zinc-700">
+                เลือกเทมเพลตที่ต้องการ
+              </h1>
+            </div>
+
+            <div className="flex flex-cols-3 justify-around gap-10">
+              {templates.map((item) => (
+                <div
+                  key={item.name}
+                  onClick={() => setTemplate(item.name)}
+                  className="group cursor-pointer flex flex-col items-center"
+                >
+                  <div className="relative overflow-hidden border border-zinc-200">
+                    <img
+                      src={item.name}
+                      alt="Template preview"
+                      width={300}
+                      height={300}
+                      className="object-cover "
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <img
+        src={"/logo.jpg"}
+        alt="Logo"
+        width={500}
+        height={540}
+        className="z-[70]"
+      />
       <div className="grid lg:grid-cols-12 gap-5 w-full max-w-[1500px] items-center justify-center">
         <div className="lg:col-span-8 w-full ">
           <CameraView

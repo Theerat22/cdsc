@@ -41,7 +41,6 @@ export default function CameraView({ isCapturing, onCapture, maxPhotos, currentC
       shutterSound.current.play().catch((e) => console.log("Audio play blocked", e));
     }
   };
-  // ----------------------------------------
 
   useEffect(() => {
     if (isCapturing && currentCount < maxPhotos && !isWaiting && countdown === null) {
@@ -56,7 +55,7 @@ export default function CameraView({ isCapturing, onCapture, maxPhotos, currentC
       setIsWaiting(false);
     }
 
-    let timer = 3;
+    let timer = 5;
     setCountdown(timer);
     playNumberSound(timer); // เล่นเสียงเลข 3 ทันทีที่เริ่ม
 
@@ -109,7 +108,7 @@ export default function CameraView({ isCapturing, onCapture, maxPhotos, currentC
       )}
 
       {isWaiting && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-blue-600/60 backdrop-blur-md z-30 animate-in fade-in">
+        <div className="absolute inset-0 flex flex-col items-center justify-center backdrop-blur-md z-30 animate-in fade-in">
           <div className="bg-white text-blue-600 px-6 py-2 rounded-full font-bold text-xl mb-4 shadow-xl">
             เตรียมตัว
           </div>

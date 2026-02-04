@@ -15,12 +15,10 @@ export default function CameraView({ isCapturing, onCapture, maxPhotos, currentC
   const [isWaiting, setIsWaiting] = useState(false);
   const [showFlash, setShowFlash] = useState(false);
 
-  // --- ส่วนที่เพิ่ม: โหลดเสียงแยกตามหมายเลข ---
   const audioNumbers = useRef<Record<number, HTMLAudioElement>>({});
   const shutterSound = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // โหลดเสียง 1, 2, 3 เตรียมไว้
     [1, 2, 3].forEach((num) => {
       audioNumbers.current[num] = new Audio(`/sounds/${num}.mp3`);
     });
@@ -57,7 +55,7 @@ export default function CameraView({ isCapturing, onCapture, maxPhotos, currentC
 
     let timer = 5;
     setCountdown(timer);
-    playNumberSound(timer); // เล่นเสียงเลข 3 ทันทีที่เริ่ม
+    playNumberSound(timer);
 
     const interval = setInterval(() => {
       timer--;
@@ -67,14 +65,14 @@ export default function CameraView({ isCapturing, onCapture, maxPhotos, currentC
         executeCapture();
       } else {
         setCountdown(timer);
-        playNumberSound(timer); // เล่นเสียงตามเลขที่เปลี่ยนไป (2 และ 1)
+        playNumberSound(timer);
       }
     }, 1000);
   };
 
   const executeCapture = () => {
     setShowFlash(true);
-    playShutter(); // เสียงแชะ!
+    playShutter();
     
     const imageSrc = webcamRef.current?.getScreenshot();
     if (imageSrc) {
@@ -94,7 +92,6 @@ export default function CameraView({ isCapturing, onCapture, maxPhotos, currentC
         className="w-full h-full object-cover scale-x-[-1]"
       />
 
-      {/* UI ส่วนแสดงผลเหมือนเดิม */}
       {showFlash && (
         <div className="absolute inset-0 bg-white animate-out fade-out duration-300 z-50" />
       )}

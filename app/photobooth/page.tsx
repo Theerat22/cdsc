@@ -15,9 +15,8 @@ export default function PhotoboothPage() {
   const [template, setTemplate] = useState<string>("");
 
   const templates = [
-    { name: "/photobooth/cd-white.jpg" },
-    { name: "/photobooth/cd-black.jpg" },
-    { name: "/photobooth/sing.jpg" },
+    { name: "/photobooth/cd-white-ex.jpg", src: "/photobooth/cd-white.jpg" },
+    { name: "/photobooth/cd-black-ex.jpg", src: "/photobooth/cd-black.jpg" },
   ];
 
   useEffect(() => {
@@ -26,92 +25,90 @@ export default function PhotoboothPage() {
     }
   }, [photos]);
 
-  const createCombinedImage = async (
-    images: string[],
-    bgSrc: string,
-  ): Promise<string> => {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return "";
+ const createCombinedImage = async (
+  images: string[],
+  bgSrc: string,
+): Promise<string> => {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return "";
 
-    canvas.width = 1300;
-    canvas.height = 2750;
+  canvas.width = 1300;
+  canvas.height = 2750;
 
-    const loadImage = (src: string): Promise<HTMLImageElement> => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        img.onload = () => resolve(img);
-        img.onerror = reject;
-        img.src = src;
-      });
-    };
-
-    try {
-      const [bgImg, ...imgObjects] = await Promise.all([
-        loadImage(bgSrc),
-        ...images.map(loadImage),
-      ]);
-
-      ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
-
-      const targetW = 1195;
-      const targetH = 690;
-      const marginTop = 280;
-      const spacing = 60;
-      const borderSize = 0;
-
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
-
-      imgObjects.forEach((img, i) => {
-        const x = (canvas.width - targetW) / 2;
-        const y = marginTop + i * (targetH + spacing);
-
-        ctx.save();
-
-        ctx.fillStyle = "#FFFFFF";
-        ctx.fillRect(x, y, targetW, targetH);
-        ctx.restore();
-
-        const drawW = targetW - borderSize * 2;
-        const drawH = targetH - borderSize * 2;
-
-        const imgRatio = img.width / img.height;
-        const targetRatio = drawW / drawH;
-        let sx, sy, sWidth, sHeight;
-
-        if (imgRatio > targetRatio) {
-          sHeight = img.height;
-          sWidth = img.height * targetRatio;
-          sx = (img.width - sWidth) / 2;
-          sy = 0;
-        } else {
-          sWidth = img.width;
-          sHeight = img.width / targetRatio;
-          sx = 0;
-          sy = (img.height - sHeight) / 2;
-        }
-
-        ctx.drawImage(
-          img,
-          sx,
-          sy,
-          sWidth,
-          sHeight,
-          x + borderSize,
-          y + borderSize,
-          drawW,
-          drawH,
-        );
-      });
-
-      return canvas.toDataURL("image/jpeg", 0.95);
-    } catch (error) {
-      console.error("Error loading images:", error);
-      return "";
-    }
+  const loadImage = (src: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
   };
+
+  try {
+    const [bgImg, ...imgObjects] = await Promise.all([
+      loadImage(bgSrc),
+      ...images.map(loadImage),
+    ]);
+
+    ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+
+    const targetW = 1195;
+    const targetH = 690;
+    const marginTop = 280;
+    const spacing = 60;
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    imgObjects.forEach((img, i) => {
+      const x = (canvas.width - targetW) / 2;
+      const y = marginTop + i * (targetH + spacing);
+
+      const imgRatio = img.width / img.height;
+      const targetRatio = targetW / targetH;
+      let sx, sy, sWidth, sHeight;
+
+      if (imgRatio > targetRatio) {
+        sWidth = img.height * targetRatio;
+        sHeight = img.height;
+        sx = (img.width - sWidth) / 2;
+        sy = 0;
+      } else {
+        sWidth = img.width;
+        sHeight = img.width / targetRatio;
+        sx = 0;
+        sy = (img.height - sHeight) / 2;
+      }
+
+      ctx.save();
+      
+      ctx.translate(x + targetW / 2, y + targetH / 2);
+
+      ctx.scale(-1, 1);
+      
+      ctx.drawImage(
+        img,
+        sx,
+        sy,
+        sWidth,
+        sHeight,
+        -targetW / 2, 
+        -targetH / 2,
+        targetW,
+        targetH,
+      );
+
+      ctx.restore();
+    });
+
+    return canvas.toDataURL("image/jpeg", 0.95);
+  } catch (error) {
+    console.error("Error loading images:", error);
+    return "";
+  }
+};
 
   const cameraStreamRef = useRef<MediaStream | null>(null);
 
@@ -223,8 +220,8 @@ export default function PhotoboothPage() {
             <div className="flex flex-cols-3 justify-around gap-10">
               {templates.map((item) => (
                 <div
-                  key={item.name}
-                  onClick={() => setTemplate(item.name)}
+                  key={item.src}
+                  onClick={() => setTemplate(item.src)}
                   className="group cursor-pointer flex flex-col items-center"
                 >
                   <div className="relative overflow-hidden border border-zinc-200">
